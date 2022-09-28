@@ -17,6 +17,7 @@ public class Main {
     static ArrayList<String> eventLocationName = new ArrayList<>();
     static ArrayList<String> country = new ArrayList<>();
     static ArrayList<String> location = new ArrayList<>();
+    static ArrayList<String> resultCountry = new ArrayList<>();
     static String receivedData = "";
 
 
@@ -43,7 +44,7 @@ public class Main {
             LocalDate endTime = LocalDate.now();
             LocalDate startTime = LocalDate.now().minusDays(dayCount);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            inputs[0] = enteredCountry;
+            inputs[0] = enteredCountry.substring(0, 1).toUpperCase() + enteredCountry.substring(1);
             inputs[1] = Integer.toString(dayCount);
             inputs[2] = endTime.format(formatter);
             inputs[3] = startTime.format(formatter);
@@ -93,12 +94,21 @@ public class Main {
             if (temp.length == 2) {
                 location.add(temp[0]);
                 country.add(temp[1]);
+                if (temp[1].equals(inputs[0])) {
+                    resultCountry.add(inputs[0]);
+                }
             } else if (temp.length == 3) { // Handling if some places has multiple commas
                 location.add(temp[0] + ", " + temp[1]);
                 country.add(temp[2]);
+                if (temp[2].equals(inputs[0])) {
+                    resultCountry.add(inputs[0]);
+                }
             } else {
                 location.add("Not specified"); // Handling if only country information is given
                 country.add(temp[0]);
+                if (temp[0].equals(inputs[0])) {
+                    resultCountry.add(inputs[0]);
+                }
             }
         }
     }
@@ -106,17 +116,14 @@ public class Main {
     public static void earthquakeInfo() {
         for (int i = 0; i < country.size() - 1; i++) {
             // Printing list of earthquakes
-            if (inputs[0].equalsIgnoreCase(country.get(i))) {
+            if (country.get(i).equalsIgnoreCase(inputs[0])) {
                 System.out.println("Country: " + country.get(i) +
                         ", Place: " + location.get(i) +
                         ", Magnitude: " + magnitude.get(i) +
                         ", Date & Time: " + time.get(i));
-                // Handling if there is no earthquake data found by desired country
-            } else if (!country.get(i).equalsIgnoreCase(inputs[0])) {
-                i++;
-            } else {
-                // Handling any other input than a country name
-                System.out.println("Please try again by entering a country name.");
+            }
+            if (resultCountry.size() == 0) {
+                System.out.println("No earthquakes were recorded past " + inputs[1] + " days.");
                 break;
             }
         }
